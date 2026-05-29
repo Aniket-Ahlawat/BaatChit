@@ -1,0 +1,384 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════════════════════════════════
+   Stream Chat base overrides
+   ════════════════════════════════════════════════════════════ */
+.str-chat__channel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--b1));
+  height: 100%;
+  width: 100%;
+}
+
+.str-chat__container {
+  max-width: none;
+  width: 100%;
+  height: 100% !important;
+  margin: 0 !important;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+  background: hsl(var(--b1));
+}
+
+.str-chat__list {
+  background-color: hsl(var(--b1));
+  padding: 12px;
+}
+
+.str-chat__list-notifications { display: none; }
+
+.str-chat__message-input {
+  border-top: none;           /* we draw our own border in the toolbar */
+  background: hsl(var(--b1));
+}
+
+/* ════════════════════════════════════════════════════════════
+   Expressiveness: custom input area
+   ════════════════════════════════════════════════════════════ */
+.expressiveness-input-area {
+  border-top: 1px solid hsl(var(--b3));
+  background: hsl(var(--b1));
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.expr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 2px;
+}
+
+.expr-mood-badge {
+  font-size: 11px;
+  opacity: 0.65;
+  font-style: italic;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOOD PICKER
+   ════════════════════════════════════════════════════════════ */
+.mood-picker-root {
+  position: relative;
+}
+
+.mood-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid hsl(var(--b3));
+  background: hsl(var(--b2));
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.mood-trigger-btn:hover { border-color: hsl(var(--p)); background: hsl(var(--b3)); }
+
+.mood-trigger-emoji { font-size: 18px; line-height: 1; }
+.mood-trigger-label { font-size: 11px; font-weight: 600; }
+
+/* Popup */
+.mood-popup {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  z-index: 100;
+  background: hsl(var(--b1));
+  border: 1px solid hsl(var(--b3));
+  border-radius: 16px;
+  padding: 12px;
+  width: 260px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  animation: popUp 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes popUp {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)  scale(1); }
+}
+
+.mood-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.65;
+}
+.mood-popup-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  padding: 2px;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+.mood-popup-close:hover { opacity: 1; }
+
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.mood-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: hsl(var(--b2));
+}
+.mood-item:hover {
+  border-color: var(--mc);
+  background: hsl(var(--b3));
+  box-shadow: 0 0 8px var(--mg);
+  transform: scale(1.07);
+}
+.mood-item-selected {
+  border-color: var(--mc) !important;
+  background: hsl(var(--b3)) !important;
+  box-shadow: 0 0 10px var(--mg) !important;
+}
+.mood-item-emoji { font-size: 22px; line-height: 1; }
+.mood-item-label { font-size: 10px; font-weight: 500; opacity: 0.75; }
+
+.mood-clear-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--b3));
+  background: transparent;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.mood-clear-btn:hover { opacity: 1; }
+
+/* ════════════════════════════════════════════════════════════
+   MOOD MESSAGE BUBBLES
+   ════════════════════════════════════════════════════════════ */
+.mood-message-root {
+  position: relative;
+}
+
+/* Mood tag pill above the bubble */
+.mood-tag-wrap {
+  display: flex;
+  width: 100%;
+}
+.mood-tag-wrap-mine   { justify-content: flex-end; padding-right: 4px; }
+.mood-tag-wrap-theirs { justify-content: flex-start; padding-left: 52px; }
+
+.mood-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--mc, transparent);
+  background: color-mix(in srgb, var(--mc, transparent) 12%, transparent);
+  color: var(--mc, inherit);
+  margin-bottom: 3px;
+  animation: fadeIn 0.3s ease;
+}
+
+.mood-tag-text  { opacity: 0.9; }
+
+/* Glow borders on bubble per mood */
+.mood-message-root[class*="mood-"] .str-chat__message-bubble {
+  border: 2px solid var(--mc) !important;
+  box-shadow: 0 0 14px var(--mg), 0 2px 8px rgba(0,0,0,0.12) !important;
+  transition: box-shadow 0.3s ease;
+}
+
+/* ── Mood keyframe animations (applied to the emoji in the tag) ── */
+.mood-tag-emoji { display: inline-block; }
+
+@keyframes mood-float {
+  0%, 100% { transform: translateY(0);    }
+  50%      { transform: translateY(-5px); }
+}
+@keyframes mood-bounce {
+  0%, 100% { transform: translateY(0);    }
+  30%      { transform: translateY(-8px); }
+  60%      { transform: translateY(-3px); }
+}
+@keyframes mood-heartbeat {
+  0%, 100% { transform: scale(1);    }
+  14%      { transform: scale(1.25); }
+  28%      { transform: scale(1);    }
+  42%      { transform: scale(1.18); }
+  56%      { transform: scale(1);    }
+}
+@keyframes mood-shake {
+  0%, 100% { transform: translateX(0);    }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px);  }
+  60%      { transform: translateX(-3px); }
+  80%      { transform: translateX(3px);  }
+}
+@keyframes mood-droop {
+  0%, 100% { transform: translateY(0) rotate(0deg);    }
+  50%      { transform: translateY(4px) rotate(-5deg); }
+}
+@keyframes mood-burn {
+  0%, 100% { transform: scale(1) rotate(0deg);    }
+  25%      { transform: scale(1.2) rotate(-6deg); }
+  75%      { transform: scale(1.1) rotate(6deg);  }
+}
+@keyframes mood-sway {
+  0%, 100% { transform: rotate(0deg);    }
+  33%      { transform: rotate(-8deg);   }
+  66%      { transform: rotate(8deg);    }
+}
+@keyframes mood-spin {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.mood-float     { animation: mood-float     2s ease-in-out infinite; }
+.mood-bounce    { animation: mood-bounce    1s ease infinite; }
+.mood-heartbeat { animation: mood-heartbeat 1.2s ease infinite; }
+.mood-shake     { animation: mood-shake     0.6s ease 1; }
+.mood-droop     { animation: mood-droop     2.5s ease-in-out infinite; }
+.mood-burn      { animation: mood-burn      0.8s ease-in-out infinite; }
+.mood-sway      { animation: mood-sway      2s ease-in-out infinite; }
+.mood-spin      { animation: mood-spin      0.6s linear 1; }
+
+/* Voice transcript under voice note */
+.transcript-pill {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid hsl(var(--b3));
+  background: hsl(var(--b2));
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 320px;
+  animation: fadeIn 0.3s ease;
+}
+.transcript-mine   { margin-left: auto; margin-right: 4px; }
+.transcript-theirs { margin-left: 52px; }
+.transcript-icon   { flex-shrink: 0; }
+.transcript-text   { font-style: italic; opacity: 0.8; }
+
+/* ════════════════════════════════════════════════════════════
+   TRANSLATE FEATURE
+   ════════════════════════════════════════════════════════════ */
+
+/* Language selector in toolbar */
+.translate-lang-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid hsl(var(--b3));
+  background: hsl(var(--b2));
+  transition: all 0.2s;
+}
+.translate-lang-wrapper:hover { border-color: hsl(var(--p)); }
+
+.translate-lang-icon { font-size: 15px; line-height: 1; }
+
+.translate-lang-select {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--bc));
+  cursor: pointer;
+  max-width: 110px;
+}
+
+/* Hover action row (translate + GIF buttons below the bubble) */
+.msg-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+  animation: fadeIn 0.15s ease;
+}
+.msg-action-left  { justify-content: flex-end;   padding-right: 4px; }
+.msg-action-right { justify-content: flex-start;  padding-left: 52px; }
+
+/* Translate hover button */
+.translate-btn {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1.5px solid hsl(var(--p) / 0.5);
+  background: hsl(var(--b1));
+  color: hsl(var(--p));
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.15s;
+}
+.translate-btn:hover { background: hsl(var(--p)); color: hsl(var(--pc)); border-color: hsl(var(--p)); }
+.translate-btn-loading { opacity: 0.7; cursor: wait; }
+
+/* Inline translation result bubble */
+.translate-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1.5px solid hsl(var(--p) / 0.35);
+  background: hsl(var(--p) / 0.08);
+  font-size: 13px;
+  line-height: 1.45;
+  max-width: 340px;
+  animation: fadeIn 0.25s ease;
+}
+.translate-mine   { margin-left: auto; margin-right: 4px; }
+.translate-theirs { margin-left: 52px; }
+
+.translate-result-icon { flex-shrink: 0; font-size: 14px; }
+.translate-result-text { flex: 1; font-style: italic; opacity: 0.9; }
+
+.translate-close-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  opacity: 0.45;
+  padding: 0 2px;
+  transition: opacity 0.15s;
+  line-height: 1;
+  align-self: flex-start;
+}
+.translate-close-btn:hover { opacity: 1; }
