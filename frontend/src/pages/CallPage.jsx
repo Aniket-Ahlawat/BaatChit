@@ -63,10 +63,11 @@ const CallPage = () => {
           image: normalizeAvatarUrl(authUser.profilePic, authUser._id),
         };
 
-        const videoClient = new StreamVideoClient({
+        const videoClient = StreamVideoClient.getOrCreateInstance({
           apiKey: tokenData.apiKey,
           user,
           token: tokenData.token,
+          options: { timeout: 10000 },
         });
         createdClient = videoClient;
 
