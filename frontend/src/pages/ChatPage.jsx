@@ -124,7 +124,7 @@ const ChatPage = () => {
           sharedChatClient = null;
           sharedChatUserId = null;
         }
-        if (!sharedChatClient) sharedChatClient = new StreamChat(tokenData.apiKey);
+        if (!sharedChatClient) sharedChatClient = new StreamChat(tokenData.apiKey, { timeout: 6000 });
 
         const client = sharedChatClient;
         if (!client.userID) {
