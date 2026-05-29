@@ -3,14 +3,21 @@ import { normalizeAvatarUrl, normalizeUserAvatar } from "./utils";
 
 export const signup = async (signupData) => {
   const response = await axiosInstance.post("/auth/signup", signupData);
+  if (response.data?.token) {
+    localStorage.setItem("jwt_token", response.data.token);
+  }
   return response.data;
 };
 
 export const login = async (loginData) => {
   const response = await axiosInstance.post("/auth/login", loginData);
+  if (response.data?.token) {
+    localStorage.setItem("jwt_token", response.data.token);
+  }
   return response.data;
 };
 export const logout = async () => {
+  localStorage.removeItem("jwt_token");
   const response = await axiosInstance.post("/auth/logout");
   return response.data;
 };

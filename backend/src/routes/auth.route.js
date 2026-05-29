@@ -18,7 +18,15 @@ import User from "../models/User.js";
 
 router.get("/me", async (req, res) => {
     try {
-        const token = req.cookies.jwt;
+        // Support both Bearer token (localStorage) and cookie
+        let token = null;
+        const authHeader = req.headers["authorization"];
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            token = authHeader.split(" ")[1];
+        } else {
+            token = req.cookies.jwt;
+        }
+
         if (!token) return res.status(200).json({ success: false, user: null });
         
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
