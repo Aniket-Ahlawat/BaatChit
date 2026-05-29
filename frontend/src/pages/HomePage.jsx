@@ -27,6 +27,8 @@ const HomePage = () => {
   const queryClient = useQueryClient();
   const location = useLocation();
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
+  const [sendingToUserId, setSendingToUserId] = useState(null);
+  const [blockingUserId, setBlockingUserId] = useState(null);
   const isFriendsOnlyPage = location.pathname === "/friends";
   const isHomePage = location.pathname === "/";
 
@@ -50,14 +52,16 @@ const HomePage = () => {
     queryFn: getBlockedUsers,
   });
 
-  const { mutate: sendRequestMutation, isPending } = useMutation({
+  const { mutate: sendRequestMutation } = useMutation({
     mutationFn: sendFriendRequest,
     onSuccess: () => {
+      setSendingToUserId(null);
       queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("Friend request sent");
     },
     onError: (error) => {
+      setSendingToUserId(null);
       const message = error?.response?.data?.message || "Could not send friend request";
       toast.error(message);
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -66,15 +70,17 @@ const HomePage = () => {
     },
   });
 
-  const { mutate: blockUserMutation, isPending: isBlockPending } = useMutation({
+  const { mutate: blockUserMutation } = useMutation({
     mutationFn: blockUser,
     onSuccess: () => {
+      setBlockingUserId(null);
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] });
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["blockedUsers"] });
     },
+    onError: () => setBlockingUserId(null),
   });
 
   useEffect(() => {
@@ -196,8 +202,11 @@ const HomePage = () => {
                         className={`btn w-full mt-2 ${
                           hasRequestBeenSent ? "btn-disabled" : "btn-primary"
                         } `}
-                        onClick={() => sendRequestMutation(user._id)}
-                        disabled={hasRequestBeenSent || isPending}
+                        onClick={() => {
+                          setSendingToUserId(user._id);
+                          sendRequestMutation(user._id);
+                        }}
+                        disabled={hasRequestBeenSent || sendingToUserId === user._id}
                       >
                         {hasRequestBeenSent ? (
                           <>
@@ -215,11 +224,14 @@ const HomePage = () => {
                       <button
                         type="button"
                         className="btn btn-outline btn-error w-full"
-                        onClick={() => blockUserMutation(user._id)}
-                        disabled={isBlockPending}
+                        onClick={() => {
+                          setBlockingUserId(user._id);
+                          blockUserMutation(user._id);
+                        }}
+                        disabled={blockingUserId === user._id}
                       >
                         <ShieldBanIcon className="size-4 mr-2" />
-                        {isBlockPending ? "Blocking..." : "Block User"}
+                        {blockingUserId === user._id ? "Blocking..." : "Block User"}
                       </button>
                     </div>
                   </div>
