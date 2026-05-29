@@ -6,14 +6,15 @@ import { getChatAccessStatus, getStreamToken } from "../lib/api";
 
 import {
   Channel,
-  ChannelHeader,
   Chat,
   MessageInput,
   MessageList,
   Thread,
   Window,
+  useChannelStateContext,
 } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
+import { VideoIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import ChatLoader      from "../components/ChatLoader";
 import CallButton      from "../components/CallButton";
@@ -257,10 +258,8 @@ const ChatPage = () => {
         {/* Pass custom Message renderer to Channel */}
         <Channel channel={channel} Message={MoodMessage}>
           <div className="w-full h-full relative flex flex-col">
-            <CallButton handleVideoCall={handleVideoCall} />
-
             <Window className="h-full flex flex-col flex-1 overflow-hidden">
-              <ChannelHeader />
+              <CustomHeader handleVideoCall={handleVideoCall} currentUserId={authUser._id?.toString() || authUser.id?.toString()} />
               <MessageList />
 
               {/* Custom bottom area: mood + translate + input */}
@@ -307,6 +306,41 @@ const LangSelector = () => {
           <option key={l.code} value={l.code}>{l.label}</option>
         ))}
       </select>
+    </div>
+  );
+};
+
+/* ── Custom Header for Mobile & Desktop ── */
+const CustomHeader = ({ handleVideoCall, currentUserId }) => {
+  const { channel } = useChannelStateContext();
+  const members = Object.values(channel?.state?.members || {});
+  const targetMember = members.find((m) => m.user?.id !== currentUserId);
+  const targetUser = targetMember?.user;
+
+  return (
+    <div className="flex items-center justify-between p-3 border-b border-base-300 bg-base-100 z-10 shrink-0">
+      <div className="flex items-center gap-3">
+        <div className="avatar">
+          <div className="w-10 h-10 rounded-full overflow-hidden">
+            <img 
+              src={targetUser?.image || "https://avatar.iran.liara.run/public"} 
+              alt="Avatar" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+        <div>
+          <h3 className="font-semibold text-sm">{targetUser?.name || "User"}</h3>
+          <p className="text-xs flex items-center gap-1 opacity-70">
+            {targetUser?.online ? (
+              <><span className="size-2 rounded-full bg-success inline-block" /> Online</>
+            ) : "Offline"}
+          </p>
+        </div>
+      </div>
+      <button onClick={handleVideoCall} className="btn btn-success btn-sm text-white btn-circle">
+        <VideoIcon className="size-4" />
+      </button>
     </div>
   );
 };
