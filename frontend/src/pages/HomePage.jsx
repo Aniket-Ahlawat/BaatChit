@@ -7,6 +7,7 @@ import {
   getRecommendedUsers,
   getUserFriends,
   sendFriendRequest,
+  unblockUser,
 } from "../lib/api";
 import { Link, useLocation } from "react-router";
 import {
@@ -29,6 +30,7 @@ const HomePage = () => {
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
   const [sendingToUserId, setSendingToUserId] = useState(null);
   const [blockingUserId, setBlockingUserId] = useState(null);
+  const [unblockingUserId, setUnblockingUserId] = useState(null);
   const isFriendsOnlyPage = location.pathname === "/friends";
   const isHomePage = location.pathname === "/";
 
@@ -83,6 +85,20 @@ const HomePage = () => {
     onError: () => setBlockingUserId(null),
   });
 
+  const { mutate: unblockUserMutation } = useMutation({
+    mutationFn: unblockUser,
+    onSuccess: () => {
+      setUnblockingUserId(null);
+      queryClient.invalidateQueries({ queryKey: ["blockedUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] });
+      queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
+      toast.success("User unblocked!");
+    },
+    onError: () => setUnblockingUserId(null),
+  });
+
   useEffect(() => {
     const outgoingIds = new Set();
     if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
@@ -117,11 +133,13 @@ const HomePage = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {friends.map((friend) => (
-                  <FriendCard
+                <FriendCard
                     key={friend._id}
                     friend={friend}
-                    onBlock={blockUserMutation}
+                    onBlock={(id) => { setBlockingUserId(id); blockUserMutation(id); }}
+                    onUnblock={(id) => { setUnblockingUserId(id); unblockUserMutation(id); }}
                     isBlocking={blockingUserId === friend._id}
+                    isUnblocking={unblockingUserId === friend._id}
                     isBlocked={blockedUserIds.has(friend._id)}
                   />
                 ))}

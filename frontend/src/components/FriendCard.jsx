@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { LANGUAGE_TO_FLAG } from "../constants";
 import { normalizeAvatarUrl } from "../lib/utils";
 
-const FriendCard = ({ friend, onBlock, isBlocking, isBlocked }) => {
+const FriendCard = ({ friend, onBlock, onUnblock, isBlocking, isUnblocking, isBlocked }) => {
   return (
     <div className="card bg-base-200 hover:shadow-md transition-shadow">
       <div className="card-body p-4">
@@ -35,15 +35,29 @@ const FriendCard = ({ friend, onBlock, isBlocking, isBlocked }) => {
               Message
             </Link>
           )}
-          {onBlock && (
-            <button
-              type="button"
-              className="btn btn-error btn-outline w-full"
-              onClick={() => onBlock(friend._id)}
-              disabled={isBlocking}
-            >
-              {isBlocking ? "Blocking..." : "Block"}
-            </button>
+
+          {isBlocked ? (
+            onUnblock && (
+              <button
+                type="button"
+                className="btn btn-success btn-outline w-full"
+                onClick={() => onUnblock(friend._id)}
+                disabled={isUnblocking}
+              >
+                {isUnblocking ? "Unblocking..." : "✓ Unblock"}
+              </button>
+            )
+          ) : (
+            onBlock && (
+              <button
+                type="button"
+                className="btn btn-error btn-outline w-full"
+                onClick={() => onBlock(friend._id)}
+                disabled={isBlocking}
+              >
+                {isBlocking ? "Blocking..." : "Block"}
+              </button>
+            )
           )}
         </div>
       </div>

@@ -31,6 +31,7 @@ const Navbar = () => {
                 <li><Link to="/notifications">Notifications</Link></li>
                 <li><Link to="/sent-requests">Sent Requests</Link></li>
                 <li><Link to="/profile">Edit Profile</Link></li>
+                <li><Link to="/blocked-users">Blocked Users</Link></li>
               </ul>
             </div>
             <Link to="/" className="flex items-center gap-1.5">
