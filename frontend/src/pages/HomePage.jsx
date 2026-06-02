@@ -121,7 +121,7 @@ const HomePage = () => {
                     key={friend._id}
                     friend={friend}
                     onBlock={blockUserMutation}
-                    isBlocking={isBlockPending}
+                    isBlocking={blockingUserId === friend._id}
                     isBlocked={blockedUserIds.has(friend._id)}
                   />
                 ))}
